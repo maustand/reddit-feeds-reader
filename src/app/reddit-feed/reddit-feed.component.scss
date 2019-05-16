@@ -1,0 +1,24 @@
+section.feeds-list {
+  padding: 25px;
+
+  .feed { 
+    margin: 5px;
+
+    .thumb {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 60%;
+  
+    }
+  
+    mat-card-footer {
+      padding: 16px;
+      
+      .votes {
+        float: right;
+      }
+    }
+
+  }
+}

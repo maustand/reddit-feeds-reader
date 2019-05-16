@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  entryPoint: 'http://www.reddit.com/'
+  redditBaseUrl: 'https://www.reddit.com'
 };
 
 /*
