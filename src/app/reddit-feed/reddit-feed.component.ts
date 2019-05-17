@@ -1,30 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, finalize } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
-import { SubReddit } from '../core/store/reddit/reddit';
-import { RedditService } from '../core/store/reddit/reddit.service';
+import { debounceTime, distinctUntilChanged, filter, finalize, takeUntil } from 'rxjs/operators';
+import { SubReddit } from '../store/reddit/reddit';
+import { RedditService } from '../store/reddit/reddit.service';
 
 @Component({
   selector: 'app-reddit-feed',
   templateUrl: './reddit-feed.component.html',
   styleUrls: ['./reddit-feed.component.scss']
 })
-export class RedditFeedComponent implements OnInit {
-  redditUrl = environment.redditBaseUrl;
+export class RedditFeedComponent implements OnInit, OnDestroy {
   isLoading = false;
-  defaultSubReddit = 'lucky';
+  defaultSubReddit = 'askreddit';
   subReddit: SubReddit;
 
-  searchSubject: Subject<string> = new Subject();
+  searchSubject$: Subject<string> = new Subject();
+  destroy$: Subject<boolean> = new Subject();
 
   constructor(private redditServ: RedditService) { }
 
   ngOnInit() {
-    this.searchSubject.pipe(
+    this.searchSubject$.pipe(
       filter(a => (a !== '')),
       debounceTime(500),
-      distinctUntilChanged()
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
     ).subscribe(searchTextValue => {
 
       this.subReddit = null;
@@ -35,10 +35,16 @@ export class RedditFeedComponent implements OnInit {
 
   }
 
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   load(subredit: string, lastPostName?: string) {
     this.isLoading = true;
     this.redditServ.getSubReddit(subredit, lastPostName).pipe(
-      finalize(() => this.isLoading = false)
+      finalize(() => this.isLoading = false),
+      takeUntil(this.destroy$)
     ).subscribe((data) => {
 
       if (!this.subReddit) { // first time or different subreddit
@@ -58,7 +64,7 @@ export class RedditFeedComponent implements OnInit {
   }
 
   onSearch(searchTextValue: string) {
-    this.searchSubject.next(searchTextValue);
+    this.searchSubject$.next(searchTextValue);
   }
 
 }

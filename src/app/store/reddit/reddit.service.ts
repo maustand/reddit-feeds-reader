@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../environments/environment';
 import { Feed, SubReddit } from './reddit';
 
 @Injectable({
@@ -45,7 +45,7 @@ export class RedditService {
 
       }),
       catchError((err, obsr) => {
-        return of(undefined);
+        return of(undefined); // in 404, not found, it should not break the flow
       })
     );
   }

@@ -12,7 +12,7 @@
   <div class="feeds-list" infiniteScroll [infiniteScrollDistance]="0.1" [infiniteScrollThrottle]="500"
     (scrolled)="onScroll()">
 
-    <h3 *ngIf="!subReddit"> No subreddit found =(</h3>
+    <h3 *ngIf="!subReddit && !isLoading"> No subreddit found =(</h3>
 
     <mat-spinner *ngIf="isLoading"></mat-spinner>
 
@@ -24,18 +24,16 @@
       </mat-card-header>
       <img *ngIf="item.thumbnail" class="thumb" mat-card-image [src]="item.thumbnail" alt="image">
       <mat-card-content>
-        <p>{{item.text}}</p>
 
-        <p>
-          <a [href]="item.url" target="_blank"> {{ item.permalink }} </a>
-        </p>
+        <p>{{item.text}}</p>
+        <p><a [href]="item.url" target="_blank"> {{ item.permalink }} </a></p>
 
       </mat-card-content>
       <mat-card-footer>
 
         <div class="icons_row">
           
-          <div>
+          <div matTooltip="Up votes">
             <mat-icon>expand_less</mat-icon>
             <span>{{ item.upVotes }}</span>
           </div>
@@ -45,16 +43,9 @@
             <span>{{ item.date | date: 'short' }}</span>
           </div>
         </div>
-        
-
-
-
-
+      
       </mat-card-footer>
     </mat-card>
 
-
   </div>
-
-
 </section>
