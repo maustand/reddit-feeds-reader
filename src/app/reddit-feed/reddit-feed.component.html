@@ -2,14 +2,19 @@
 
   <div class="searchbox">
     <form>
-      <mat-form-field >
+      <mat-form-field>
         <input #seachInput matInput placeholder="Search a sub reddit =)" (keyup)="onSearch(seachInput.value)">
       </mat-form-field>
     </form>
 
   </div>
 
-  <div class="feeds-list">
+  <div class="feeds-list" infiniteScroll [infiniteScrollDistance]="0.1" [infiniteScrollThrottle]="500"
+    (scrolled)="onScroll()">
+
+    <h3 *ngIf="!subReddit"> No subreddit found =(</h3>
+
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
 
 
     <mat-card class="feed" *ngFor="let item of subReddit?.feeds;">
@@ -28,19 +33,28 @@
       </mat-card-content>
       <mat-card-footer>
 
-        <span>{{ item.date | date: 'short' }}</span>
+        <div class="icons_row">
+          
+          <div>
+            <mat-icon>expand_less</mat-icon>
+            <span>{{ item.upVotes }}</span>
+          </div>
+
+          <div class="date">
+            <mat-icon>date_range</mat-icon>
+            <span>{{ item.date | date: 'short' }}</span>
+          </div>
+        </div>
+        
 
 
-        <div><i class="material-icons">arrow_back</i> arrow back</div>
-        <!-- <span class="votes">{{ item.upVotes }}</span> -->
+
 
       </mat-card-footer>
     </mat-card>
-    <mat-icon class="mat-icon-rtl-mirror" svgIcon="thumb-up"></mat-icon>
-
-
 
 
   </div>
+
 
 </section>

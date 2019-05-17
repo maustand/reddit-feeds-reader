@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, finalize } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { SubReddit } from '../core/store/reddit/reddit';
 import { RedditService } from '../core/store/reddit/reddit.service';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged} from 'rxjs/operators';
 
 @Component({
   selector: 'app-reddit-feed',
@@ -12,7 +12,8 @@ import { debounceTime, distinctUntilChanged} from 'rxjs/operators';
 })
 export class RedditFeedComponent implements OnInit {
   redditUrl = environment.redditBaseUrl;
-  defaultSubReddit = 'israel';
+  isLoading = false;
+  defaultSubReddit = 'lucky';
   subReddit: SubReddit;
 
   searchSubject: Subject<string> = new Subject();
@@ -21,9 +22,12 @@ export class RedditFeedComponent implements OnInit {
 
   ngOnInit() {
     this.searchSubject.pipe(
+      filter(a => (a !== '')),
       debounceTime(500),
       distinctUntilChanged()
     ).subscribe(searchTextValue => {
+
+      this.subReddit = null;
       this.load(searchTextValue);
     });
 
@@ -31,18 +35,30 @@ export class RedditFeedComponent implements OnInit {
 
   }
 
-  onSearch(searchTextValue: string) {
-    if (searchTextValue) {
-      this.searchSubject.next(searchTextValue);
+  load(subredit: string, lastPostName?: string) {
+    this.isLoading = true;
+    this.redditServ.getSubReddit(subredit, lastPostName).pipe(
+      finalize(() => this.isLoading = false)
+    ).subscribe((data) => {
+
+      if (!this.subReddit) { // first time or different subreddit
+        this.subReddit = data;
+      } else {
+        this.subReddit.after = data.after;
+        this.subReddit.feeds.push(...data.feeds);
+      }
+
+    });
+  }
+
+  onScroll() {
+    if (this.subReddit.after) { // else means no more data.
+      this.load(this.subReddit.name, this.subReddit.after);
     }
   }
 
-
-  load(subredit: string) {
-    this.redditServ.getSubReddit(subredit).subscribe((data) => {
-      this.subReddit = data;
-    });
-
+  onSearch(searchTextValue: string) {
+    this.searchSubject.next(searchTextValue);
   }
 
 }

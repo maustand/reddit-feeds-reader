@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
-import { SubReddit, Feed } from './reddit';
-import { map } from 'rxjs/operators';
+import { Feed, SubReddit } from './reddit';
 
 @Injectable({
   providedIn: 'root'
@@ -15,11 +16,18 @@ export class RedditService {
 
 
   getSubReddit(subbredit: string, lastUrl?: string) {
-    return this.http.get(`${this.entryPoint}/${subbredit}.json?raw_json=1`).pipe(
+
+    let urlRequest = `${this.entryPoint}/${subbredit}.json?count=25&raw_json=1`;
+
+    if (lastUrl) {
+      urlRequest += `&after=${lastUrl}`;
+    }
+
+    return this.http.get(urlRequest).pipe(
       map((res: any): SubReddit => {
         return {
           name: subbredit,
-          after: res.after,
+          after: res.data.after,
           feeds: res.data.children.map((child: any): Feed => {
             return {
               author: child.data.author,
@@ -35,6 +43,9 @@ export class RedditService {
           })
         };
 
+      }),
+      catchError((err, obsr) => {
+        return of(undefined);
       })
     );
   }

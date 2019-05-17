@@ -8,6 +8,9 @@ import { AppComponent } from './app.component';
 import { RedditService } from './core/store/reddit/reddit.service';
 import { RedditFeedComponent } from './reddit-feed/reddit-feed.component';
 
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+
+
 
 /** Material  */
 import {
@@ -16,7 +19,8 @@ import {
   MatButtonToggleModule,
   MatIconModule,
   MatFormFieldModule,
-  MatInputModule
+  MatInputModule,
+  MatProgressSpinnerModule
 } from '@angular/material';
 
 
@@ -35,6 +39,7 @@ import {
     HttpClientModule,
     HttpClientJsonpModule,
     FlexLayoutModule,
+    InfiniteScrollModule,
 
     /** Material  */
     MatButtonModule,
@@ -42,7 +47,9 @@ import {
     MatButtonToggleModule,
     MatIconModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatProgressSpinnerModule
+
   ],
   providers: [RedditService],
   bootstrap: [AppComponent]
