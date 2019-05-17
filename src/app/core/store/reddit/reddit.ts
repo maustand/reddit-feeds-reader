@@ -3,10 +3,12 @@
 export interface Feed {
     author: string;
     title: string;
-    link: string;
+    text: string;
+    url: string;
+    permalink: string;
     upVotes: number;
     thumbnail: string | null;
-    date: Date | string;
+    date: Date | number;
 }
 
 export interface SubReddit {

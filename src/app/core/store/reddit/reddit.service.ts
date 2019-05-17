@@ -14,22 +14,22 @@ export class RedditService {
   constructor(private http: HttpClient) { }
 
 
-  getSubReddit(subbredit: string) {
-    return this.http.get(`${this.entryPoint}/${subbredit}.json`).pipe(
+  getSubReddit(subbredit: string, lastUrl?: string) {
+    return this.http.get(`${this.entryPoint}/${subbredit}.json?raw_json=1`).pipe(
       map((res: any): SubReddit => {
         return {
           name: subbredit,
           after: res.after,
-          feeds: res.data.children.map((child: any) => {
-            child = child.data;
-debugger;
+          feeds: res.data.children.map((child: any): Feed => {
             return {
-              author: child.author,
-              title: child.title,
-              link: child.permalink,
-              upVotes: child.ups,
-              thumbnail: (child.preview) ? child.preview.images[0].resolutions.pop().url : null,
-              date: '2019-05-16T15:13:23+0000'
+              author: child.data.author,
+              title: child.data.title,
+              text: child.data.selftext,
+              permalink: child.data.permalink,
+              url: child.data.url,
+              upVotes: child.data.ups,
+              thumbnail: (child.data.preview) ? child.data.preview.images[0].resolutions.pop().url : null,
+              date: new Date(child.data.created * 1000)
             };
 
           })
@@ -39,6 +39,3 @@ debugger;
     );
   }
 }
-
-
-///  (child.data.preview) ? child.preview.images[0].resolutions[child.preview.images[0].resolutions.length - 1].url : null,

@@ -1,5 +1,13 @@
-section.feeds-list {
+section.main {
   padding: 25px;
+
+  .searchbox {
+    margin-bottom: 5em;
+
+     mat-form-field {
+       width: 100%;
+     }
+  }
 
   .feed { 
     margin: 5px;

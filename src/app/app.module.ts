@@ -14,7 +14,9 @@ import {
   MatButtonModule,
   MatCardModule,
   MatButtonToggleModule,
-  MatIconModule
+  MatIconModule,
+  MatFormFieldModule,
+  MatInputModule
 } from '@angular/material';
 
 
@@ -38,7 +40,9 @@ import {
     MatButtonModule,
     MatCardModule,
     MatButtonToggleModule,
-    MatIconModule
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   providers: [RedditService],
   bootstrap: [AppComponent]

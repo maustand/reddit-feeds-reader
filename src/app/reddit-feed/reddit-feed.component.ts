@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { RedditService } from '../core/store/reddit/reddit.service';
-import { Feed, SubReddit } from '../core/store/reddit/reddit';
 import { environment } from '../../environments/environment';
+import { SubReddit } from '../core/store/reddit/reddit';
+import { RedditService } from '../core/store/reddit/reddit.service';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged} from 'rxjs/operators';
 
 @Component({
   selector: 'app-reddit-feed',
@@ -13,14 +15,36 @@ export class RedditFeedComponent implements OnInit {
   defaultSubReddit = 'israel';
   subReddit: SubReddit;
 
+  searchSubject: Subject<string> = new Subject();
 
   constructor(private redditServ: RedditService) { }
 
   ngOnInit() {
-    this.redditServ.getSubReddit(this.defaultSubReddit).subscribe((subredit) => {
-      console.log(subredit);
-      this.subReddit = subredit;
+    this.searchSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged()
+    ).subscribe(searchTextValue => {
+      this.load(searchTextValue);
     });
+
+    this.load(this.defaultSubReddit);
+
+  }
+
+  onSearch(searchTextValue: string) {
+    if (searchTextValue) {
+      this.searchSubject.next(searchTextValue);
+    }
+  }
+
+
+  load(subredit: string) {
+    this.redditServ.getSubReddit(subredit).subscribe((data) => {
+      this.subReddit = data;
+    });
+
   }
 
 }
+
+

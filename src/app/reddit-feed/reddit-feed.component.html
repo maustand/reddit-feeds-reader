@@ -1,39 +1,46 @@
-<section class="feeds-list">
+<section class="main">
+
+  <div class="searchbox">
+    <form>
+      <mat-form-field >
+        <input #seachInput matInput placeholder="Search a sub reddit =)" (keyup)="onSearch(seachInput.value)">
+      </mat-form-field>
+    </form>
+
+  </div>
+
+  <div class="feeds-list">
 
 
-  <mat-card class="feed" *ngFor="let item of subReddit?.feeds;">
-    <mat-card-header>
-      <mat-card-title>{{ item.title }}</mat-card-title>
-      <mat-card-subtitle>{{ item.author }}</mat-card-subtitle>
-    </mat-card-header>
-    <img *ngIf="item.thumbnail" class="thumb" mat-card-image [src]="item.thumbnail" alt="image">
-    <mat-card-content>
-      <p>
-        The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
-        A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
-        bred for hunting.
-      </p>
+    <mat-card class="feed" *ngFor="let item of subReddit?.feeds;">
+      <mat-card-header>
+        <mat-card-title>{{ item.title }}</mat-card-title>
+        <mat-card-subtitle>{{ item.author }}</mat-card-subtitle>
+      </mat-card-header>
+      <img *ngIf="item.thumbnail" class="thumb" mat-card-image [src]="item.thumbnail" alt="image">
+      <mat-card-content>
+        <p>{{item.text}}</p>
 
-      <p>
-        <a [href]="redditUrl + item.link"  target="_blank"> {{ item.link }} </a>
-      </p>
+        <p>
+          <a [href]="item.url" target="_blank"> {{ item.permalink }} </a>
+        </p>
 
+      </mat-card-content>
+      <mat-card-footer>
 
-
-    </mat-card-content>
-    <mat-card-footer>
-
-      <span>{{ item.date | date: 'short' }}</span>
+        <span>{{ item.date | date: 'short' }}</span>
 
 
-      <div><i class="material-icons">arrow_back</i> arrow back</div>
-      <!-- <span class="votes">{{ item.upVotes }}</span> -->
+        <div><i class="material-icons">arrow_back</i> arrow back</div>
+        <!-- <span class="votes">{{ item.upVotes }}</span> -->
 
-    </mat-card-footer>
-  </mat-card>
-  <mat-icon class="mat-icon-rtl-mirror" svgIcon="thumb-up"></mat-icon>
+      </mat-card-footer>
+    </mat-card>
+    <mat-icon class="mat-icon-rtl-mirror" svgIcon="thumb-up"></mat-icon>
 
 
 
+
+  </div>
 
 </section>
